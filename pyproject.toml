@@ -1,0 +1,58 @@
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "clang-include-cleaner"
+dynamic = ["version"]
+authors = [{name = "Xianpeng Shen", email = "xianpeng.shen@gmail.com"}]
+license = { text = "Apache 2.0" }
+description = "Clang-include-cleaner is an LLVM-based tool for finding and removing unused #include directives in C++ code"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: C",
+    "Programming Language :: C++",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+regex = '^(?P<value>\d+\.\d+\.\d+(\.[1-9]\d*)?)'
+input = "clang-include-cleaner_version.txt"
+
+[dependency-groups]
+test = ["pytest"]
+
+[project.urls]
+Clang = "http://clang.llvm.org/"
+Documentation = "https://clang.llvm.org/extra/clang-include-cleaner.html"
+Download = "https://github.com/llvm/llvm-project/releases"
+Source = "https://github.com/cpp-linter/clang-include-cleaner"
+
+[project.scripts]
+"clang-include-cleaner" = "clang_include_cleaner:clang_include_cleaner"
+
+[tool.scikit-build]
+wheel.packages = ["clang_include_cleaner"]
+wheel.py-api = "py2.py3"
+cmake.version = ">=3.16.0"
+ninja.version = ">=1.10.0"
+cmake.verbose = true
+logging.level = "DEBUG"
+
+[tool.cibuildwheel]
+# Super-verbose output for debugging purpose
+build-verbosity = 3
+# Set CMAKE_GENERATOR env var which is respected by scikit-build-core to use Ninja on all platforms
+environment = "CMAKE_GENERATOR=Ninja"
+
+# Testing commands for our wheels
+before-test = [
+    "git config --global user.name Name",
+    "git config --global user.email foo@bar.com"
+]
+test-requires = ["pytest", "pytest-git"]
+test-command = "pytest {package}/test"
