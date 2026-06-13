@@ -2,13 +2,17 @@
 
 Thank you for investing your time in contributing to this project! ✨
 
+This project packages `clang-include-cleaner` for PyPI. Contributions
+that improve the packaging, build pipeline, CI, or platform support are
+welcome. For changes to the tool itself, see the
+[LLVM project](https://github.com/llvm/llvm-project).
+
 ## Table of Contents
 
 - [Reporting Issues](#reporting-issues)
 - [Pull Requests](#pull-requests)
 - [Development Setup](#development-setup)
-- [Building New Releases](#building-new-releases)
-- [Release Process](#release-process)
+- [Releasing](#releasing)
 
 ## Reporting Issues
 
@@ -17,9 +21,8 @@ Thank you for investing your time in contributing to this project! ✨
 
 ## Pull Requests
 
-- Please help reviewers understand the purpose of your pull request.
-- Link the PR to the issue you are solving.
-- If you run into merge conflicts, resolve them before requesting review.
+- Link the PR to its issue.
+- Resolve merge conflicts before requesting review.
 
 ## Development Setup
 
@@ -37,10 +40,9 @@ pip install -e ".[test]"
 pytest
 ```
 
-## Building New Releases
+## Releasing
 
-This repository provides the logic to build and publish binary wheels of
-`clang-include-cleaner`. The build process:
+### Build process
 
 1. Downloads the LLVM source tree from the official GitHub releases
 2. Compiles `clang-include-cleaner` statically via CMake
@@ -59,37 +61,29 @@ The version is stored in [`clang-include-cleaner_version.txt`](clang-include-cle
 The format is `<LLVM_MAJOR>.<LLVM_MINOR>.<LLVM_PATCH>`, optionally
 followed by `.<WHEEL_PACKAGING>` for rebuilds of the same LLVM version.
 
-### Triggering a Release
+### How to release
 
-#### Automated (tag push)
+1. Edit `clang-include-cleaner_version.txt` to the desired version.
+2. Create a pull request with the version bump.
+3. Once merged, push a matching git tag:
 
-Push a version tag matching `v?<major>.<minor>.<patch>` (or with a
-4th component) to trigger the [release workflow][]:
+   ```bash
+   git tag v<major>.<minor>.<patch>
+   git push origin v<major>.<minor>.<patch>
+   ```
 
-```bash
-git tag v22.1.7
-git push origin v22.1.7
-```
+4. The [release workflow][] builds wheels for all platforms, tests them,
+   and publishes to PyPI. A GitHub Release is created automatically.
 
-[release workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml
-
-#### Manual (workflow dispatch)
-
-Go to the [release workflow][] page and click "Run workflow". The
-following inputs are available:
+To rebuild the same LLVM version (e.g. to fix a packaging issue), use
+`.post<N>` as the 4th version component, or trigger the workflow
+manually via the [Actions tab][release workflow] with these inputs:
 
 | Input | Description | Default |
 |-------|-------------|---------|
-| `llvm_version` | Override the LLVM version (e.g. `22.1.7`) | (from version file) |
-| `wheel_version` | Version suffix for rebuilds of the same LLVM version | `0` |
+| `llvm_version` | Override the LLVM version | (from version file) |
+| `wheel_version` | Version suffix for rebuilds | `0` |
 | `deploy_to_testpypi` | Deploy to [TestPyPI](https://test.pypi.org/) instead of PyPI | `false` |
 | `use_qemu` | Build QEMU-emulated targets (armv7l, i686) | `true` |
 
-## Release Process
-
-1. Edit [`clang-include-cleaner_version.txt`](clang-include-cleaner_version.txt) to the desired version.
-2. Create a pull request with the version bump.
-3. Once merged, push a matching git tag to trigger the release workflow.
-4. The workflow builds wheels for all platforms, tests them, and
-   publishes to PyPI.
-5. A GitHub Release is created automatically for tagged commits.
+[release workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml
