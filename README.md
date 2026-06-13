@@ -1,52 +1,80 @@
-# clang-include-cleaner Python distribution
+<!-- markdownlint-disable MD033 MD041 -->
 
-[![PyPI Release](https://img.shields.io/pypi/v/clang-include-cleaner.svg)](https://pypi.org/project/clang-include-cleaner)
+[issues]: https://github.com/cpp-linter/clang-include-cleaner/issues
+[contributing]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/CONTRIBUTING.md
+[clang-format-wheel]: https://github.com/ssciwr/clang-format-wheel
+[clang-tidy-wheel]: https://github.com/ssciwr/clang-tidy-wheel
+[clang-apply-replacements-wheel]: https://github.com/cpp-linter/clang-apply-replacements-wheel
+[license]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md
 
-This project packages the `clang-include-cleaner` utility as a Python package. It allows you to install `clang-include-cleaner` directly from PyPI:
+[llvm-releases]: https://github.com/llvm/llvm-project/releases
+[cpp-linter-hub]: https://cpp-linter.github.io/
 
+# clang-include-cleaner
+
+[![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
+[![Platform](https://img.shields.io/badge/platform-linux--64%20%7C%20linux--arm64%20%7C%20win--64%20%7C%20osx--64%20%7C%20osx--arm64-blue)](https://github.com/cpp-linter/clang-include-cleaner)
+[![Build](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml)
+[![PyPI - Downloads](https://img.shields.io/pypi/dw/clang-include-cleaner)](https://pypistats.org/packages/clang-include-cleaner)
+[![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
+
+A Python distribution of `clang-include-cleaner` - the LLVM-based tool
+that finds **unused `#include` directives** in C++ source files. Install
+it with a single `pip install`, no LLVM toolchain required.
+
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Related Projects](#related-projects)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+
+```bash
+pip install clang-include-cleaner
 ```
-python -m pip install clang-include-cleaner
+
+The wheel bundles a statically-linked binary and clang builtin
+headers - **no LLVM installation is required** on the host machine.
+
+> [!TIP]
+> In CI, use `pipx run clang-include-cleaner` — no install needed.
+> All [GitHub Actions runners](https://docs.github.com/en/actions)
+> ship with `pipx` pre-installed.
+
+Verify:
+
+```bash
+clang-include-cleaner --version
 ```
 
-This project intends to release a new PyPI package for each major and minor release of `clang-include-cleaner`.
+Run `clang-include-cleaner --help` to see all available options.
 
-## What is clang-include-cleaner?
+For full usage documentation, see the
+[upstream docs](https://clang.llvm.org/extra/clang-include-cleaner.html).
 
-`clang-include-cleaner` is an LLVM-based tool that analyzes C++ source files and identifies unused `#include` directives that can be safely removed. It is part of the `clang-tools-extra` suite.
+## Related Projects
 
-## Use with pipx
+- [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
+- [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
+- [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
 
-You can use `pipx` to run clang-include-cleaner, as well. For example, `pipx run clang-include-cleaner <args>` will run clang-include-cleaner without any previous install required on any machine with pipx (including all default GitHub Actions / Azure runners, avoiding requiring a pre-install step or even `actions/setup-python`).
+## Contributing
 
-## Building new releases
+We welcome contributions! See [CONTRIBUTING.md][contributing] for
+development setup, build instructions, and the release process.
 
-The [clang-include-cleaner repository](https://github.com/cpp-linter/clang-include-cleaner) provides the logic to build and publish binary wheels of the `clang-include-cleaner` utility.
+Please use [GitHub issues][issues] for bug reports and feature requests.
 
-In order to add a new release, the following steps are necessary:
+## License
 
-* Edit the [version file](https://github.com/cpp-linter/clang-include-cleaner/blob/main/clang-include-cleaner_version.txt) to reflect the new version.
-* Make a GitHub release to trigger the [GitHub Actions release workflow](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml). Alternatively, the workflow can be triggered manually.
+This project is licensed under the Apache License 2.0 with LLVM
+exceptions - see [LICENSE.md][license] for details.
 
-On manual triggers, the following input variables are available:
-* `use_qemu`: Whether to build targets that require emulation (default: `true`)
-* `llvm_version`: Override the LLVM version (default: `""`)
-* `wheel_version`: Override the wheel packaging version (default `"0"`)
-* `deploy_to_testpypi`: Whether to deploy to TestPyPI instead of PyPI (default: `false`)
+The `clang-include-cleaner` binary bundled in the wheels is part of the
+[LLVM Project][llvm-releases] and is provided under the same license.
 
-The repository with the precommit hook is automatically updated using a scheduled Github Actions workflow.
 
-## Acknowledgments
-
-This repository extends the great work of several other projects:
-
-* `clang-include-cleaner` itself is [provided by the LLVM project](https://github.com/llvm/llvm-project) under the Apache 2.0 License with LLVM exceptions.
-* The build logic is based on [scikit-build](https://github.com/scikit-build/scikit-build) which greatly reduces the amount of low level code necessary to package `clang-include-cleaner`.
-* The `scikit-build` packaging examples of [CMake](https://github.com/scikit-build/cmake-python-distributions) and [Ninja](https://github.com/scikit-build/ninja-python-distributions) were very helpful in packaging `clang-include-cleaner`.
-* The CI build process is controlled by [cibuildwheel](https://github.com/pypa/cibuildwheel) which makes building wheels across a number of platforms a pleasant experience (!)
-
-We are grateful for the generous provisioning with CI resources that GitHub currently offers to Open Source projects.
-
-## Troubleshooting
-
-To see which clang-include-cleaner binary the package is using
-you can set `CLANG_INCLUDE_CLEANER_WHEEL_VERBOSE` to `1` in your environment.
