@@ -12,8 +12,7 @@
 
 [iwyu]: https://include-what-you-use.org/
 [compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
-[cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
-[cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
+
 [scikit-build]: https://github.com/scikit-build/scikit-build
 [cibuildwheel]: https://github.com/pypa/cibuildwheel
 [ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
@@ -30,13 +29,6 @@
 A Python distribution of `clang-include-cleaner` - the LLVM-based tool
 that finds **unused `#include` directives** in C++ source files. Install
 it with a single `pip install`, no LLVM toolchain required.
-
-> [!TIP]
-> Looking for a complete C++ linting solution? Check out
-> [**cpp-linter-action**][cpp-linter-action] (GitHub Action) and
-> [**cpp-linter-hooks**][cpp-linter-hooks] (pre-commit hooks) -
-> they run `clang-format`, `clang-tidy`, and clang-include-cleaner
-> together.
 
 ---
 
