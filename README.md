@@ -10,8 +10,6 @@
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
 [cpp-linter-hub]: https://cpp-linter.github.io/
 
-[iwyu]: https://include-what-you-use.org/
-[compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
 # clang-include-cleaner
 
 [![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
@@ -28,50 +26,10 @@ it with a single `pip install`, no LLVM toolchain required.
 
 ## Table of Contents
 
-- [Why clang-include-cleaner?](#why-clang-include-cleaner)
-- [Quick Start](#quick-start)
 - [Installation](#installation)
-- [Usage](#usage)
-  - [Scan a single file](#scan-a-single-file)
-  - [Scan with a compilation database](#scan-with-a-compilation-database)
-  - [Integrate into a CI pipeline](#integrate-into-a-ci-pipeline)
-- [FAQ](#faq)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
-
-## Why clang-include-cleaner?
-
-C++ codebases accumulate unused `#include` directives over time. They
-slow down builds, obscure real dependencies, and make refactoring
-riskier. `clang-include-cleaner` finds includes you can **safely
-delete**.
-
-| | clang-include-cleaner | [include-what-you-use][iwyu] |
-|---|---|---|
-| **Approach** | Find *removable* includes | Suggest *additions + removals* |
-| **Philosophy** | Safe removals, no pragmas needed | Full rewrite with IWYU pragmas |
-| **Setup** | `pip install` (bundles its own clang) | Mapping file + system LLVM |
-| **CI readiness** | `pipx run` in one line | Needs a mapped build environment |
-| **Output** | Warnings on unused `#include` lines | Add/remove recommendations per file |
-
-> [!NOTE]
-> Use `clang-include-cleaner` when you want a **safe, zero-config tool**
-> to find dead includes. Use IWYU when you need comprehensive header
-> rewriting with custom mapping rules. The two tools are complementary.
-
-## Quick Start
-
-```bash
-# install
-pip install clang-include-cleaner
-
-# scan a file
-clang-include-cleaner src/main.cpp
-
-# check result: 0 = clean, 1 = unused includes found
-echo $?
-```
 
 ## Installation
 
@@ -95,91 +53,8 @@ clang-include-cleaner --version
 
 Run `clang-include-cleaner --help` to see all available options.
 
-## Usage
-
-### Scan a single file
-
-```bash
-clang-include-cleaner src/main.cpp
-```
-
-Example output:
-
-```
-src/main.cpp:3:1: warning: included header iostream is not used directly [include-cleaner]
-#include <iostream>
-^~~~~~~~~~~~~~~~~~
-```
-
-> [!IMPORTANT]
-> Always review findings before deleting. An include that appears
-> unused may still be needed for transitive dependencies or
-> platform-specific builds.
-
-### Scan with a compilation database
-
-For projects with complex include paths, provide a
-[`compile_commands.json`][compile-commands]:
-
-```bash
-# Generate with CMake
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build .
-cmake --build build
-
-# Point clang-include-cleaner at the build directory
-clang-include-cleaner -p build src/main.cpp
-```
-
-### Integrate into a CI pipeline
-
-#### GitHub Actions with pipx (zero install)
-
-```yaml
-- name: Check for unused includes
-  run: pipx run clang-include-cleaner -p build src/**/*.cpp
-```
-
-#### GitHub Actions with pip
-
-```yaml
-- name: Install clang-include-cleaner
-  run: pip install clang-include-cleaner
-
-- name: Check for unused includes
-  run: clang-include-cleaner -p build src/**/*.cpp
-```
-
-## FAQ
-
-### What's the difference between clang-include-cleaner and include-what-you-use?
-
-`clang-include-cleaner` is a **safety net** — it warns about includes
-you can remove without breaking the build. IWYU is a **full rewrite
-tool** that also suggests additions.
-
-Use `clang-include-cleaner` for CI gating and quick cleanup; reach for
-IWYU when you need comprehensive header hygiene with custom mappings.
-See the [comparison table](#why-clang-include-cleaner) above for a
-side-by-side breakdown.
-
-### Does this tool modify my code?
-
-No. `clang-include-cleaner` is a diagnostic tool - it reports findings
-but does not edit files. You decide which includes to remove.
-
-### What LLVM version is bundled?
-
-The Python package version mirrors the bundled LLVM version
-(e.g. `clang-include-cleaner==22.1.8` bundles LLVM 22.1.8).
-Check the [release tags](https://github.com/cpp-linter/clang-include-cleaner/tags)
-for all available versions.
-
-### Why not just `apt install clang-tools-extra`?
-
-- **Version pinning** - `pip install` pins an exact LLVM version per project
-- **No system deps** - works in virtual environments and containers without `sudo`
-- **Cross-platform** - same command on Linux, macOS, and Windows
-- **CI-native** - `pipx run` requires zero setup on GitHub Actions runners
+For full usage documentation, see the
+[upstream docs](https://clang.llvm.org/extra/clang-include-cleaner.html).
 
 ## Related Projects
 
