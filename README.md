@@ -8,15 +8,10 @@
 [license]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md
 
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
-[clang-tools-extra]: https://clang.llvm.org/extra/index.html
-
 [cpp-linter-hub]: https://cpp-linter.github.io/
 
 [iwyu]: https://include-what-you-use.org/
 [compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
-
-[cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
-[cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
 # clang-include-cleaner
 
 [![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
@@ -74,13 +69,9 @@ pip install clang-include-cleaner
 # scan a file
 clang-include-cleaner src/main.cpp
 
-# check what was found
-echo $?   # 0 = clean, non-zero = unused includes detected
+# check result: 0 = clean, 1 = unused includes found
+echo $?
 ```
-
-> [!NOTE]
-> New to the tool? See the [clang-tools-extra documentation][clang-tools-extra]
-> for an overview of all available tools in the suite.
 
 ## Installation
 
@@ -102,6 +93,8 @@ Verify:
 clang-include-cleaner --version
 ```
 
+Run `clang-include-cleaner --help` to see all available options.
+
 ## Usage
 
 ### Scan a single file
@@ -117,6 +110,11 @@ src/main.cpp:3:1: warning: included header iostream is not used directly [includ
 #include <iostream>
 ^~~~~~~~~~~~~~~~~~
 ```
+
+> [!IMPORTANT]
+> Always review findings before deleting. An include that appears
+> unused may still be needed for transitive dependencies or
+> platform-specific builds.
 
 ### Scan with a compilation database
 
@@ -155,25 +153,24 @@ clang-include-cleaner -p build src/main.cpp
 
 ### What's the difference between clang-include-cleaner and include-what-you-use?
 
-See the [comparison table](#why-clang-include-cleaner) above. In short:
-`clang-include-cleaner` tells you what you can **safely delete**; IWYU
-tells you what to **add and remove**. They're complementary - many teams
-use both.
+`clang-include-cleaner` is a **safety net** — it warns about includes
+you can remove without breaking the build. IWYU is a **full rewrite
+tool** that also suggests additions.
+
+Use `clang-include-cleaner` for CI gating and quick cleanup; reach for
+IWYU when you need comprehensive header hygiene with custom mappings.
+See the [comparison table](#why-clang-include-cleaner) above for a
+side-by-side breakdown.
 
 ### Does this tool modify my code?
 
 No. `clang-include-cleaner` is a diagnostic tool - it reports findings
 but does not edit files. You decide which includes to remove.
 
-> [!IMPORTANT]
-> Always review findings manually. An include that appears unused may
-> still be required for transitive dependencies or platform-specific
-> builds.
-
 ### What LLVM version is bundled?
 
-The bundled LLVM version is encoded in the Python package version.
-For `clang-include-cleaner==22.1.7`, the LLVM version is `22.1.7`.
+The Python package version mirrors the bundled LLVM version
+(e.g. `clang-include-cleaner==22.1.8` bundles LLVM 22.1.8).
 Check the [release tags](https://github.com/cpp-linter/clang-include-cleaner/tags)
 for all available versions.
 
@@ -183,13 +180,6 @@ for all available versions.
 - **No system deps** - works in virtual environments and containers without `sudo`
 - **Cross-platform** - same command on Linux, macOS, and Windows
 - **CI-native** - `pipx run` requires zero setup on GitHub Actions runners
-
-### Can I use this alongside clang-format and clang-tidy?
-
-Absolutely. The [cpp-linter hub][cpp-linter-hub] provides
-[pre-commit hooks][cpp-linter-hooks] and a [GitHub Action][cpp-linter-action]
-that run `clang-format`, `clang-tidy`, and `clang-include-cleaner`
-together as a unified pipeline.
 
 ## Related Projects
 
