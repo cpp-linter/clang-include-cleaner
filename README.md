@@ -12,7 +12,8 @@
 
 [iwyu]: https://include-what-you-use.org/
 [compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
-
+[cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
+[cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
 [scikit-build]: https://github.com/scikit-build/scikit-build
 [cibuildwheel]: https://github.com/pypa/cibuildwheel
 [ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
