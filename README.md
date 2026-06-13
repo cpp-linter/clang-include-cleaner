@@ -20,7 +20,7 @@
 [ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
 [cmake-python-distributions]: https://github.com/scikit-build/cmake-python-distributions
 
-# clang-include-cleaner <sub><sup>| unused #include detection for C++</sup></sub>
+# clang-include-cleaner
 
 [![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/clang-include-cleaner)](https://pypi.org/project/clang-include-cleaner/)
