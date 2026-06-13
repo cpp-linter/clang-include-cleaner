@@ -17,12 +17,6 @@
 
 [cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
 [cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
-[clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
-[scikit-build]: https://github.com/scikit-build/scikit-build
-[cibuildwheel]: https://github.com/pypa/cibuildwheel
-[ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
-[cmake-python-distributions]: https://github.com/scikit-build/cmake-python-distributions
-
 # clang-include-cleaner
 
 [![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
@@ -46,8 +40,6 @@ it with a single `pip install`, no LLVM toolchain required.
   - [Scan a single file](#scan-a-single-file)
   - [Scan with a compilation database](#scan-with-a-compilation-database)
   - [Integrate into a CI pipeline](#integrate-into-a-ci-pipeline)
-- [How It Works](#how-it-works)
-- [Platform Support](#platform-support)
 - [FAQ](#faq)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
@@ -159,36 +151,6 @@ clang-include-cleaner -p build src/main.cpp
   run: clang-include-cleaner -p build src/**/*.cpp
 ```
 
-Combine with [cpp-linter-action][] for a complete format + tidy +
-include-clean pipeline.
-
-## How It Works
-
-When you `pip install clang-include-cleaner`, the wheel delivers:
-
-- **A statically-linked native binary** - built from the official
-  [LLVM source tree][llvm-releases] for your platform
-- **Clang builtin headers** - bundled so the tool can resolve standard
-  library includes
-
-The Python package acts as a thin wrapper: its entry-point locates the
-bundled binary and forwards all arguments to it. No system LLVM, no
-shared-library dependencies, no additional compilation.
-
-## Platform Support
-
-Pre-built wheels are available for:
-
-| Platform | Architectures |
-|----------|--------------|
-| Linux (manylinux) | x86_64, i686, aarch64, armv7l |
-| Linux (musllinux) | x86_64, i686, armv7l |
-| macOS | x86_64 (Intel), arm64 (Apple Silicon) |
-| Windows | AMD64, x86 |
-
-Source distributions are also published on PyPI for platforms without a
-pre-built wheel.
-
 ## FAQ
 
 ### What's the difference between clang-include-cleaner and include-what-you-use?
@@ -234,10 +196,6 @@ together as a unified pipeline.
 - [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
 - [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
 - [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
-- [**cpp-linter-action**][cpp-linter-action] — GitHub Action for clang-format + clang-tidy + include cleaning
-- [**cpp-linter-hooks**][cpp-linter-hooks] — pre-commit hooks with auto-detect for `compile_commands.json`
-- [**clang-tools-pip**][clang-tools-pip] — CLI for installing clang-format, clang-tidy, and clang-query binaries
-- [**cpp-linter hub**][cpp-linter-hub] — organization website with docs, guides, and benchmarks
 
 ## Contributing
 
