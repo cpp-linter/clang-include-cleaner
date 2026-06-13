@@ -2,7 +2,9 @@
 
 [issues]: https://github.com/cpp-linter/clang-include-cleaner/issues
 [contributing]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/CONTRIBUTING.md
-[security]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/SECURITY.md
+[clang-format-wheel]: https://github.com/ssciwr/clang-format-wheel
+[clang-tidy-wheel]: https://github.com/ssciwr/clang-tidy-wheel
+[clang-apply-replacements-wheel]: https://github.com/cpp-linter/clang-apply-replacements-wheel
 [license]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md
 
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
@@ -29,14 +31,14 @@
 [![Build](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml)
 [![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
 
-A Python distribution of `clang-include-cleaner` — the LLVM-based tool
+A Python distribution of `clang-include-cleaner` - the LLVM-based tool
 that finds **unused `#include` directives** in C++ source files. Install
 it with a single `pip install`, no LLVM toolchain required.
 
 > [!TIP]
 > Looking for a complete C++ linting solution? Check out
 > [**cpp-linter-action**][cpp-linter-action] (GitHub Action) and
-> [**cpp-linter-hooks**][cpp-linter-hooks] (pre-commit hooks) —
+> [**cpp-linter-hooks**][cpp-linter-hooks] (pre-commit hooks) -
 > they run `clang-format`, `clang-tidy`, and clang-include-cleaner
 > together.
 
@@ -58,10 +60,8 @@ it with a single `pip install`, no LLVM toolchain required.
 - [How It Works](#how-it-works)
 - [Platform Support](#platform-support)
 - [FAQ](#faq)
-- [Troubleshooting](#troubleshooting)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
-- [Security](#security)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -120,11 +120,11 @@ pip install clang-include-cleaner
 ```
 
 The wheel bundles a statically-linked binary and clang builtin
-headers — **no LLVM installation is required** on the host machine.
+headers - **no LLVM installation is required** on the host machine.
 
 ### pipx (CI-friendly)
 
-`pipx` runs the tool without installing anything permanently — ideal for
+`pipx` runs the tool without installing anything permanently - ideal for
 CI pipelines and disposable environments:
 
 ```bash
@@ -196,9 +196,9 @@ include-clean pipeline.
 
 When you `pip install clang-include-cleaner`, the wheel delivers:
 
-- **A statically-linked native binary** — built from the official
+- **A statically-linked native binary** - built from the official
   [LLVM source tree][llvm-releases] for your platform
-- **Clang builtin headers** — bundled so the tool can resolve standard
+- **Clang builtin headers** - bundled so the tool can resolve standard
   library includes
 
 The Python package acts as a thin wrapper: its entry-point locates the
@@ -221,16 +221,16 @@ pre-built wheel.
 
 ## FAQ
 
-### What’s the difference between clang-include-cleaner and include-what-you-use?
+### What's the difference between clang-include-cleaner and include-what-you-use?
 
 See the [comparison table](#why-clang-include-cleaner) above. In short:
 `clang-include-cleaner` tells you what you can **safely delete**; IWYU
-tells you what to **add and remove**. They’re complementary — many teams
+tells you what to **add and remove**. They're complementary - many teams
 use both.
 
 ### Does this tool modify my code?
 
-No. `clang-include-cleaner` is a diagnostic tool — it reports findings
+No. `clang-include-cleaner` is a diagnostic tool - it reports findings
 but does not edit files. You decide which includes to remove.
 
 > [!IMPORTANT]
@@ -247,10 +247,10 @@ for all available versions.
 
 ### Why not just `apt install clang-tools-extra`?
 
-- **Version pinning** — `pip install` pins an exact LLVM version per project
-- **No system deps** — works in virtual environments and containers without `sudo`
-- **Cross-platform** — same command on Linux, macOS, and Windows
-- **CI-native** — `pipx run` requires zero setup on GitHub Actions runners
+- **Version pinning** - `pip install` pins an exact LLVM version per project
+- **No system deps** - works in virtual environments and containers without `sudo`
+- **Cross-platform** - same command on Linux, macOS, and Windows
+- **CI-native** - `pipx run` requires zero setup on GitHub Actions runners
 
 ### Can I use this alongside clang-format and clang-tidy?
 
@@ -259,43 +259,11 @@ Absolutely. The [cpp-linter hub][cpp-linter-hub] provides
 that run `clang-format`, `clang-tidy`, and `clang-include-cleaner`
 together as a unified pipeline.
 
-## Troubleshooting
-
-### The binary isn’t found
-
-Set `CLANG_INCLUDE_CLEANER_WHEEL_VERBOSE=1` to see which binary the
-package is loading:
-
-```bash
-CLANG_INCLUDE_CLEANER_WHEEL_VERBOSE=1 clang-include-cleaner --version
-# Found binary: /path/to/venv/lib/.../data/bin/clang-include-cleaner
-```
-
-If no binary path is printed, your wheel may be corrupted. Reinstall:
-
-```bash
-pip uninstall clang-include-cleaner
-pip install --no-cache-dir clang-include-cleaner
-```
-
-### “stddef.h not found” or similar header errors
-
-The wheel bundles clang builtin headers. If you see header-not-found
-errors, the wrapper script should resolve this automatically. If
-not, please [open an issue][issues].
-
-### Slow analysis on large projects
-
-Use a `compile_commands.json` to avoid re-parsing headers from scratch.
-In CI, limit the scan to recently-changed files:
-
-```bash
-git diff --name-only origin/main..HEAD -- '*.cpp' '*.h' \
-  | xargs clang-include-cleaner -p build
-```
-
 ## Related Projects
 
+- [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
+- [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
+- [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
 - [**cpp-linter-action**][cpp-linter-action] — GitHub Action for clang-format + clang-tidy + include cleaning
 - [**cpp-linter-hooks**][cpp-linter-hooks] — pre-commit hooks with auto-detect for `compile_commands.json`
 - [**clang-tools-pip**][clang-tools-pip] — CLI for installing clang-format, clang-tidy, and clang-query binaries
@@ -308,15 +276,10 @@ development setup, build instructions, and the release process.
 
 Please use [GitHub issues][issues] for bug reports and feature requests.
 
-## Security
-
-See [SECURITY.md][security] for our security policy and how to report
-vulnerabilities privately.
-
 ## License
 
 This project is licensed under the Apache License 2.0 with LLVM
-exceptions — see [LICENSE.md][license] for details.
+exceptions - see [LICENSE.md][license] for details.
 
 The `clang-include-cleaner` binary bundled in the wheels is part of the
 [LLVM Project][llvm-releases] and is provided under the same license.
@@ -335,5 +298,5 @@ This project extends the great work of several other projects:
   in setting up this project.
 - The CI build matrix is powered by [cibuildwheel][], making
   cross-platform wheel builds a pleasant experience.
-- GitHub’s generous CI resources for open-source projects make this
+- GitHub's generous CI resources for open-source projects make this
   multi-platform release pipeline possible.
