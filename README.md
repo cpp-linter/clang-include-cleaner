@@ -9,14 +9,10 @@
 
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
 [clang-tools-extra]: https://clang.llvm.org/extra/index.html
-[cpp-linter-hub]: https://cpp-linter.github.io/
 
 [iwyu]: https://include-what-you-use.org/
 [compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
 
-[cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
-[cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
-[clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
 [scikit-build]: https://github.com/scikit-build/scikit-build
 [cibuildwheel]: https://github.com/pypa/cibuildwheel
 [ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
@@ -263,10 +259,6 @@ together as a unified pipeline.
 - [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
 - [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
 - [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
-- [**cpp-linter-action**][cpp-linter-action] — GitHub Action for clang-format + clang-tidy + include cleaning
-- [**cpp-linter-hooks**][cpp-linter-hooks] — pre-commit hooks with auto-detect for `compile_commands.json`
-- [**clang-tools-pip**][clang-tools-pip] — CLI for installing clang-format, clang-tidy, and clang-query binaries
-- [**cpp-linter hub**][cpp-linter-hub] — organization website with docs, guides, and benchmarks
 
 ## Contributing
 
