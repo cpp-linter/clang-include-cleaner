@@ -26,7 +26,6 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/clang-include-cleaner)](https://pypi.org/project/clang-include-cleaner/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/clang-include-cleaner)](https://pypistats.org/packages/clang-include-cleaner)
 [![Platform](https://img.shields.io/badge/platform-linux--64%20%7C%20linux--arm64%20%7C%20win--64%20%7C%20osx--64%20%7C%20osx--arm64-blue)](https://github.com/cpp-linter/clang-include-cleaner)
-[![License](https://img.shields.io/github/license/cpp-linter/clang-include-cleaner?label=license)](https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md)
 [![Build](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml)
 [![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
 
