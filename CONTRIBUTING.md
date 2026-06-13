@@ -13,7 +13,7 @@ Thank you for investing your time in contributing to this project! ✨
 ## Reporting Issues
 
 - **Bugs and feature requests** — [open an issue](https://github.com/cpp-linter/clang-include-cleaner/issues/new/choose)
-- **Questions** — start a [discussion](https://github.com/cpp-linter/clang-include-cleaner/discussions) (if enabled) or use [issues](https://github.com/cpp-linter/clang-include-cleaner/issues)
+- **Questions** — start a [discussion](https://github.com/cpp-linter/discussions) or use [issues](https://github.com/cpp-linter/clang-include-cleaner/issues)
 
 ## Pull Requests
 
