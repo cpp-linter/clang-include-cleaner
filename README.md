@@ -10,9 +10,14 @@
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
 [clang-tools-extra]: https://clang.llvm.org/extra/index.html
 
+[cpp-linter-hub]: https://cpp-linter.github.io/
+
 [iwyu]: https://include-what-you-use.org/
 [compile-commands]: https://clang.llvm.org/docs/JSONCompilationDatabase.html
 
+[cpp-linter-action]: https://github.com/cpp-linter/cpp-linter-action
+[cpp-linter-hooks]: https://github.com/cpp-linter/cpp-linter-hooks
+[clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
 [scikit-build]: https://github.com/scikit-build/scikit-build
 [cibuildwheel]: https://github.com/pypa/cibuildwheel
 [ninja-python-distributions]: https://github.com/scikit-build/ninja-python-distributions
@@ -36,11 +41,7 @@ it with a single `pip install`, no LLVM toolchain required.
 
 - [Why clang-include-cleaner?](#why-clang-include-cleaner)
 - [Quick Start](#quick-start)
-- [Requirements](#requirements)
 - [Installation](#installation)
-  - [pip](#pip)
-  - [pipx (CI-friendly)](#pipx-ci-friendly)
-  - [Verify the install](#verify-the-install)
 - [Usage](#usage)
   - [Scan a single file](#scan-a-single-file)
   - [Scan with a compilation database](#scan-with-a-compilation-database)
@@ -51,7 +52,6 @@ it with a single `pip install`, no LLVM toolchain required.
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ## Why clang-include-cleaner?
 
@@ -90,18 +90,7 @@ echo $?   # 0 = clean, non-zero = unused includes detected
 > New to the tool? See the [clang-tools-extra documentation][clang-tools-extra]
 > for an overview of all available tools in the suite.
 
-## Requirements
-
-| Requirement | Details |
-|-------------|---------|
-| **Python** | 3.10 or newer |
-| **OS** | Linux (glibc ≥ 2.17 or musl), macOS, Windows |
-| **Architecture** | x86-64, arm64, i686, armv7l |
-| **Compile database** (optional) | [`compile_commands.json`][compile-commands] for accurate analysis |
-
 ## Installation
-
-### pip
 
 ```bash
 pip install clang-include-cleaner
@@ -110,19 +99,12 @@ pip install clang-include-cleaner
 The wheel bundles a statically-linked binary and clang builtin
 headers - **no LLVM installation is required** on the host machine.
 
-### pipx (CI-friendly)
+> [!TIP]
+> In CI, use `pipx run clang-include-cleaner` — no install needed.
+> All [GitHub Actions runners](https://docs.github.com/en/actions)
+> ship with `pipx` pre-installed.
 
-`pipx` runs the tool without installing anything permanently - ideal for
-CI pipelines and disposable environments:
-
-```bash
-pipx run clang-include-cleaner src/main.cpp
-```
-
-All [default GitHub Actions runners](https://docs.github.com/en/actions)
-ship with `pipx`, so this works without `actions/setup-python`.
-
-### Verify the install
+Verify:
 
 ```bash
 clang-include-cleaner --version
@@ -252,6 +234,10 @@ together as a unified pipeline.
 - [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
 - [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
 - [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
+- [**cpp-linter-action**][cpp-linter-action] — GitHub Action for clang-format + clang-tidy + include cleaning
+- [**cpp-linter-hooks**][cpp-linter-hooks] — pre-commit hooks with auto-detect for `compile_commands.json`
+- [**clang-tools-pip**][clang-tools-pip] — CLI for installing clang-format, clang-tidy, and clang-query binaries
+- [**cpp-linter hub**][cpp-linter-hub] — organization website with docs, guides, and benchmarks
 
 ## Contributing
 
@@ -268,19 +254,4 @@ exceptions - see [LICENSE.md][license] for details.
 The `clang-include-cleaner` binary bundled in the wheels is part of the
 [LLVM Project][llvm-releases] and is provided under the same license.
 
-## Acknowledgments
 
-This project extends the great work of several other projects:
-
-- [`clang-include-cleaner`][clang-tools-extra] itself is part of the
-  [LLVM Project][llvm-releases], provided under the Apache 2.0 License
-  with LLVM exceptions.
-- The build logic is based on [scikit-build][] which greatly reduces the
-  amount of low-level code necessary to package the utility.
-- The packaging examples of [CMake][cmake-python-distributions] and
-  [Ninja][ninja-python-distributions] by scikit-build were helpful
-  in setting up this project.
-- The CI build matrix is powered by [cibuildwheel][], making
-  cross-platform wheel builds a pleasant experience.
-- GitHub's generous CI resources for open-source projects make this
-  multi-platform release pipeline possible.
