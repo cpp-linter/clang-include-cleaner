@@ -4,7 +4,7 @@
 [contributing]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/CONTRIBUTING.md
 [clang-format-wheel]: https://github.com/ssciwr/clang-format-wheel
 [clang-tidy-wheel]: https://github.com/ssciwr/clang-tidy-wheel
-[clang-apply-replacements-wheel]: https://github.com/cpp-linter/clang-apply-replacements-wheel
+[clang-apply-replacements-wheel]: https://github.com/cpp-linter/clang-apply-replacements
 [license]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md
 
 [llvm-releases]: https://github.com/llvm/llvm-project/releases
