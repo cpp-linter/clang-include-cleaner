@@ -54,7 +54,7 @@ clang-include-cleaner --version
 Run `clang-include-cleaner --help` to see all available options.
 
 For full usage documentation, see the
-[upstream docs](https://clang.llvm.org/extra/clang-include-cleaner.html).
+[upstream docs](https://clang.llvm.org/extra/clang-tidy/checks/misc/include-cleaner.html).
 
 ## Related Projects
 
