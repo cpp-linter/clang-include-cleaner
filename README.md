@@ -1,48 +1,25 @@
-<!-- markdownlint-disable MD033 MD041 -->
-
-[issues]: https://github.com/cpp-linter/clang-include-cleaner/issues
-[contributing]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/CONTRIBUTING.md
-[clang-format-wheel]: https://github.com/ssciwr/clang-format-wheel
-[clang-tidy-wheel]: https://github.com/ssciwr/clang-tidy-wheel
-[clang-apply-replacements-wheel]: https://github.com/cpp-linter/clang-apply-replacements
-[license]: https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md
-
-[llvm-releases]: https://github.com/llvm/llvm-project/releases
-[cpp-linter-hub]: https://cpp-linter.github.io/
-
 # clang-include-cleaner
 
-[![PyPI version](https://img.shields.io/pypi/v/clang-include-cleaner.svg?color=blue)](https://pypi.org/project/clang-include-cleaner/)
-[![Platform](https://img.shields.io/badge/platform-linux--64%20%7C%20linux--arm64%20%7C%20win--64%20%7C%20osx--64%20%7C%20osx--arm64-blue)](https://github.com/cpp-linter/clang-include-cleaner)
-[![Build](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/release.yml)
-[![PyPI - Downloads](https://img.shields.io/pypi/dw/clang-include-cleaner)](https://pypistats.org/packages/clang-include-cleaner)
-[![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
+[![PyPI](https://img.shields.io/pypi/v/clang-include-cleaner?labelColor=454a63&color=007ec6)](https://pypi.org/project/clang-include-cleaner/)
+[![part of cpp-linter](https://img.shields.io/badge/part%20of-cpp--linter-ffc20a?labelColor=454a63)](https://cpp-linter.github.io/)
 
-A Python distribution of `clang-include-cleaner` - the LLVM-based tool
-that finds **unused `#include` directives** in C++ source files. Install
-it with a single `pip install`, no LLVM toolchain required.
+A Python wheel of `clang-include-cleaner`, the LLVM-based tool that finds unused and missing
+`#include` directives in C++ source files.
 
----
+[Website](https://cpp-linter.github.io/) · [Get started](https://cpp-linter.github.io/getting-started/#just-the-clang-tools) · [Discussions](https://github.com/orgs/cpp-linter/discussions)
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Related Projects](#related-projects)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Installation
+## Quick start
 
 ```bash
 pip install clang-include-cleaner
 ```
 
-The wheel bundles a statically-linked binary and clang builtin
-headers - **no LLVM installation is required** on the host machine.
+The wheel bundles the `clang-include-cleaner` binary and the clang builtin headers; no LLVM
+installation is required on the host machine.
 
 > [!TIP]
 > In CI, use `pipx run clang-include-cleaner` — no install needed.
-> All [GitHub Actions runners](https://docs.github.com/en/actions)
+> [GitHub-hosted runners](https://github.com/actions/runner-images)
 > ship with `pipx` pre-installed.
 
 Verify:
@@ -51,30 +28,45 @@ Verify:
 clang-include-cleaner --version
 ```
 
-Run `clang-include-cleaner --help` to see all available options.
+## Usage
 
-For full usage documentation, see the
-[upstream docs](https://clang.llvm.org/extra/clang-tidy/checks/misc/include-cleaner.html).
+`clang-include-cleaner` reads the compile commands from a `compile_commands.json`. Point `-p` at
+the directory that holds it, for example `build/` after
+`cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`:
 
-## Related Projects
+```bash
+clang-include-cleaner -p build --print=changes src/main.cpp
+```
 
-- [**clang-format-wheel**][clang-format-wheel] — pip-installable clang-format binary
-- [**clang-tidy-wheel**][clang-tidy-wheel] — pip-installable clang-tidy binary
-- [**clang-apply-replacements-wheel**][clang-apply-replacements-wheel] — pip-installable clang-apply-replacements binary
+```text
+- <vector> @Line:2
+```
+
+- `-` lines are includes the file does not use. `+` lines are headers the file uses but only
+  includes indirectly.
+- `--edit` applies the changes to the file. Without `--print`, `--edit` or `--html`, the tool
+  prints nothing. `--print` and `--html` take a single source file.
+- On macOS, set `SDKROOT=$(xcrun --show-sdk-path)` if the compile commands have no `-isysroot`
+  and standard headers such as `<string>` are not found.
+
+Run `clang-include-cleaner --help` to see all available options. The clang-tidy check
+[misc-include-cleaner](https://clang.llvm.org/extra/clang-tidy/checks/misc/include-cleaner.html)
+runs the same analysis.
+
+## Supported versions
+
+- PyPI has wheels for LLVM 22. `pip install clang-include-cleaner` installs the newest.
+- Wheels exist for Linux (x86-64, x86, ARM64 and ARMv7 with glibc; x86-64, x86 and ARMv7 with
+  musl), macOS (x86-64 and ARM64) and Windows (x86-64 and x86). On other platforms pip builds
+  the source distribution, which downloads and compiles LLVM.
+- For other LLVM versions, the
+  [static binaries](https://github.com/cpp-linter/clang-tools-static-binaries/releases) include
+  clang-include-cleaner for LLVM 18 to 23.
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md][contributing] for
-development setup, build instructions, and the release process.
-
-Please use [GitHub issues][issues] for bug reports and feature requests.
+See [CONTRIBUTING.md](https://github.com/cpp-linter/clang-include-cleaner/blob/main/CONTRIBUTING.md) for development setup, build instructions, and the release process, and use [GitHub issues](https://github.com/cpp-linter/clang-include-cleaner/issues) for bug reports and feature requests.
 
 ## License
 
-This project is licensed under the Apache License 2.0 with LLVM
-exceptions - see [LICENSE.md][license] for details.
-
-The `clang-include-cleaner` binary bundled in the wheels is part of the
-[LLVM Project][llvm-releases] and is provided under the same license.
-
-
+This project is licensed under the Apache License 2.0 - see [LICENSE.md](https://github.com/cpp-linter/clang-include-cleaner/blob/main/LICENSE.md) for details. The `clang-include-cleaner` binary bundled in the wheels is part of the [LLVM Project](https://github.com/llvm/llvm-project/releases) and is licensed under the [Apache License 2.0 with LLVM Exceptions](https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT).
