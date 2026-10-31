@@ -86,7 +86,7 @@ jobs:
 
     - name: Export macOS SDKROOT
       if: runner.os == 'macOS'
-      run: echo SDKROOT=$(xcrun --sdk macosx --show-sdk-path) >> $GITHUB_ENV
+      run: echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> "$GITHUB_ENV"
 
     - name: Override LLVM version (${{ github.event.inputs.llvm_version }})
       if: github.event.inputs.llvm_version
@@ -103,8 +103,6 @@ jobs:
         CIBW_ARCHS: "${{ matrix.arch }}"
         CIBW_BEFORE_TEST: rm -rf {package}/clang_include_cleaner
         CIBW_TEST_SKIP: "*linux*"
-        # always skip PyPY builds + what's defined in the matrix
-        CIBW_SKIP: "pp* ${{matrix.skip}}"
         # restrict to a single Python version as wheel does not depend on Python:
         CIBW_BUILD: "cp311-${{ matrix.platform }}*"
 

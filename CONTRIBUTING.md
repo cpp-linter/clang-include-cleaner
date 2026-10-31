@@ -75,8 +75,8 @@ followed by `.<WHEEL_PACKAGING>` for rebuilds of the same LLVM version.
 4. The [publish workflow][] builds wheels for all platforms, tests them,
    and publishes to PyPI. A GitHub Release is created automatically.
 
-To rebuild the same LLVM version (e.g. to fix a packaging issue), use
-`.post<N>` as the 4th version component, or trigger the workflow
+To rebuild the same LLVM version (e.g. to fix a packaging issue), add a 4th
+version component of 1 or more (e.g. `23.1.4.1`), or trigger the workflow
 manually via the [Actions tab][publish workflow] with these inputs:
 
 | Input | Description | Default |
@@ -84,6 +84,5 @@ manually via the [Actions tab][publish workflow] with these inputs:
 | `llvm_version` | Override the LLVM version | (from version file) |
 | `wheel_version` | Version suffix for rebuilds | `0` |
 | `deploy_to_testpypi` | Deploy to [TestPyPI](https://test.pypi.org/) instead of PyPI | `false` |
-| `use_qemu` | Build QEMU-emulated targets (armv7l, i686) | `true` |
 
 [publish workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/publish.yml
