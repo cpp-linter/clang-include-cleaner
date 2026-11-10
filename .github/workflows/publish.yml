@@ -199,3 +199,31 @@ jobs:
       - name: GitHub release for tagged commits
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         if: startsWith(github.ref, 'refs/tags/')
+
+  close-issues:
+    # The Monitor LLVM Releases workflow opens an issue for each new LLVM
+    # version. Close the ones this release, or a newer one, has dealt with.
+    name: Close the LLVM update issues
+    needs: [upload_pypi]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Close issues for LLVM versions up to this release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          released=$(echo "${TAG#v}" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          gh issue list --label llvm-update --state open --json number,title \
+            --jq '.[] | "\(.number) \(.title)"' | while read -r number title; do
+            wanted=$(echo "$title" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+            [ -n "$wanted" ] || continue
+            # Close when the version the issue asks for is not newer than the release.
+            if [ "$(printf '%s\n%s\n' "$wanted" "$released" | sort -V | tail -n 1)" = "$released" ]; then
+              gh issue close "$number" --reason completed
+            fi
+          done
