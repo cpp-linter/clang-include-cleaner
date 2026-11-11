@@ -55,7 +55,7 @@ runs the same analysis.
 
 ## Supported versions
 
-- PyPI has wheels for LLVM 22. `pip install clang-include-cleaner` installs the newest.
+- PyPI has wheels for LLVM 22 and 23. `pip install clang-include-cleaner` installs the newest.
 - Wheels exist for Linux (x86-64, x86, ARM64 and ARMv7 with glibc; x86-64, x86 and ARMv7 with
   musl), macOS (x86-64 and ARM64) and Windows (x86-64 and x86). On other platforms pip builds
   the source distribution, which downloads and compiles LLVM.

@@ -61,19 +61,49 @@ The version is stored in [`clang-include-cleaner_version.txt`](clang-include-cle
 The format is `<LLVM_MAJOR>.<LLVM_MINOR>.<LLVM_PATCH>`, optionally
 followed by `.<WHEEL_PACKAGING>` for rebuilds of the same LLVM version.
 
+### Monitoring LLVM upstream
+
+A [monitor-llvm workflow][] runs daily and compares the newest stable LLVM release
+with the newest version on PyPI. When LLVM is ahead, it creates an issue labeled
+`llvm-update`. The [publish workflow][] closes the issue when that version, or a
+newer one, has been published.
+
+[monitor-llvm workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/monitor-llvm.yml
+
+### Build check on pull requests
+
+The [test workflow][] builds one wheel (manylinux x86-64) and runs the tests on pull
+requests that change the build: `CMakeLists.txt`, `pyproject.toml`, the version file,
+the package or the tests. GitHub does not start it on a pull request that a workflow
+opened, such as the one from Prepare Release: close and reopen that pull request to
+build the new LLVM version before merging.
+
+[test workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/test.yml
+
 ### How to release
+
+**Option A — Automated (recommended)**
+
+1. Go to **[Actions → Prepare Release][prepare-release workflow]** → "Run workflow".
+2. Enter the version (e.g. `23.1.5`) and run → a PR is auto-created with the version bump.
+3. Review and merge the PR.
+   - The [auto-tag workflow][] creates and pushes the git tag and starts the
+     [publish workflow][] for it.
+   - The [publish workflow][] builds wheels, tests them, publishes to PyPI and
+     creates a GitHub Release.
+
+**Option B — Manual**
 
 1. Edit `clang-include-cleaner_version.txt` to the desired version.
 2. Create a pull request with the version bump.
-3. Once merged, push a matching git tag:
+3. Merge the PR.
+   - The [auto-tag workflow][] creates and pushes the git tag and starts the
+     [publish workflow][] for it.
+   - The [publish workflow][] builds wheels, tests them, publishes to PyPI and
+     creates a GitHub Release.
 
-   ```bash
-   git tag v<major>.<minor>.<patch>
-   git push origin v<major>.<minor>.<patch>
-   ```
-
-4. The [publish workflow][] builds wheels for all platforms, tests them,
-   and publishes to PyPI. A GitHub Release is created automatically.
+[prepare-release workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/prepare-release.yml
+[auto-tag workflow]: https://github.com/cpp-linter/clang-include-cleaner/actions/workflows/auto-tag.yml
 
 To rebuild the same LLVM version (e.g. to fix a packaging issue), add a 4th
 version component of 1 or more (e.g. `23.1.4.1`), or trigger the workflow

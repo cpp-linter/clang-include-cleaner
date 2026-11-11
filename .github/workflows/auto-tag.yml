@@ -1,0 +1,83 @@
+name: Auto Tag on Version Change
+
+# When a commit lands on main that changed the version file, automatically
+# create and push the corresponding git tag.  The existing publish.yml
+# (triggered by tag push) then handles building, testing, and publishing.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'clang-include-cleaner_version.txt'
+  # Allow manual trigger as a fallback
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  # to start publish.yml for the new tag (a tag pushed with GITHUB_TOKEN
+  # does not trigger other workflows)
+  actions: write
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    # Guard: only run on the upstream repo, not on forks
+    if: github.repository_owner == 'cpp-linter'
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0       # need history to detect version change
+          persist-credentials: true  # needed to push the tag
+
+      - name: Read current version
+        id: version
+        run: |
+          VERSION=$(cat clang-include-cleaner_version.txt)
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version actually changed
+        id: changed
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+
+          # If this tag already exists on this commit, skip
+          if git rev-parse -q --verify "refs/tags/${TAG}" > /dev/null 2>&1; then
+            echo "Tag ${TAG} already exists — nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # On push events: check whether the version file actually changed.
+          # On workflow_dispatch: skip the diff check (manual trigger means intent).
+          if [ "$EVENT_NAME" = "push" ]; then
+            if git diff --name-only HEAD~1 HEAD | grep -q 'clang-include-cleaner_version.txt'; then
+              echo "Version file changed — will create tag."
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "Version file present but did NOT change in this push — skipping."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "Manual dispatch — creating tag."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.changed.outputs.skip != 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+          # A tag pushed with GITHUB_TOKEN does not start publish.yml's
+          # tag trigger, so start it for the tag explicitly.
+          gh workflow run publish.yml --ref "${TAG}"
+          echo "✅ Tag ${TAG} created and pushed — publish workflow started."

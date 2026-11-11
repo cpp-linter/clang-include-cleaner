@@ -1,0 +1,128 @@
+name: Monitor LLVM Releases
+
+# Periodically check the official LLVM project for new stable releases.
+# When a version newer than what we currently package is found,
+# automatically create an issue as a TODO reminder.
+
+on:
+  schedule:
+    # Daily at 08:00 UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'cpp-linter'
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read current packaged LLVM version
+        id: current
+        run: |
+          # Releases are published from the publish workflow, so the newest
+          # version on PyPI is what we package, not the version file.
+          FULL=$(curl -fsSL https://pypi.org/pypi/clang-include-cleaner/json | jq -r .info.version)
+          # Extract the LLVM version (first 3 components)
+          LLVM=$(echo "$FULL" | grep -oP '^\d+\.\d+\.\d+')
+          echo "value=$LLVM" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch latest stable LLVM release
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Fetch LLVM releases, keep only stable tags (exclude -rc, -rc1, etc.),
+          # sort by semver, and pick the highest.
+          # The newest 100 releases always include the newest stable one.
+          # gh api has no --per-page flag, so per_page goes in the query string.
+          LATEST=$(gh api 'repos/llvm/llvm-project/releases?per_page=100' \
+            --jq '.[].tag_name' \
+            | grep -oP '^llvmorg-\d+\.\d+\.\d+$' \
+            | sed 's/llvmorg-//' \
+            | sort -V \
+            | tail -1)
+
+          if [ -z "$LATEST" ]; then
+            echo "::warning::Could not determine latest stable LLVM version."
+          fi
+          echo "value=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Compare versions
+        id: check
+        if: steps.latest.outputs.value
+        env:
+          CURRENT: ${{ steps.current.outputs.value }}
+          LATEST: ${{ steps.latest.outputs.value }}
+        run: |
+          echo "Current packaged version: $CURRENT"
+          echo "Latest stable LLVM:     $LATEST"
+
+          if [ "$LATEST" = "$CURRENT" ]; then
+            echo "Already up to date."
+            exit 0
+          fi
+
+          # Use sort -V to determine which is semantically greater
+          HIGHER=$(printf '%s\n%s' "$CURRENT" "$LATEST" | sort -V | tail -1)
+          if [ "$HIGHER" = "$LATEST" ]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Current version is ahead of latest LLVM release (pre-release tracking?)."
+          fi
+
+      - name: Create issue for new LLVM version
+        if: steps.check.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CURRENT: ${{ steps.current.outputs.value }}
+          LATEST: ${{ steps.latest.outputs.value }}
+          WORKFLOWS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/workflows
+        run: |
+          TAG="llvmorg-${LATEST}"
+
+          # Don't create a duplicate if an open issue already exists
+          EXISTING=$(gh issue list \
+            --label llvm-update \
+            --state open \
+            --search "$TAG" \
+            --json number --jq '.[0].number' 2>/dev/null)
+
+          if [ -n "$EXISTING" ]; then
+            echo "Issue #$EXISTING for $TAG already exists — skipping."
+            exit 0
+          fi
+
+          # Build issue body without leading whitespace (avoids code-block rendering)
+          cat > /tmp/issue-body.md << BODYEOF
+          New stable LLVM release: [**${TAG}**](https://github.com/llvm/llvm-project/releases/tag/${TAG})
+
+          The current packaged version is **${CURRENT}**.
+
+          ### To update
+
+          1. Go to **[Actions → Prepare Release](${WORKFLOWS_URL}/prepare-release.yml)** → Run workflow
+          2. Enter version \`${LATEST}\` and run
+          3. Review and merge the auto-created PR
+
+          ---
+          > 🤖 Auto-created by the [monitor-llvm] workflow.
+
+          [monitor-llvm]: ${WORKFLOWS_URL}/monitor-llvm.yml
+          BODYEOF
+
+          # The label may not exist yet in this repository.
+          gh label create llvm-update --color 1d76db \
+            --description "A new LLVM release is available" 2>/dev/null || true
+
+          gh issue create \
+            --title "LLVM ${LATEST} is available — update clang-include-cleaner" \
+            --label llvm-update \
+            --body-file /tmp/issue-body.md
