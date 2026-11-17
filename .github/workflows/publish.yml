@@ -30,6 +30,9 @@ jobs:
       contents: read
 
     strategy:
+      # Each job builds LLVM for about an hour. Let the other platforms finish
+      # when one job fails, so "Re-run failed jobs" only rebuilds that one.
+      fail-fast: false
       matrix:
         include:
           # Linux

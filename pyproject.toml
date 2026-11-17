@@ -46,8 +46,11 @@ logging.level = "DEBUG"
 [tool.cibuildwheel]
 # Super-verbose output for debugging purpose
 build-verbosity = 3
-# Set CMAKE_GENERATOR env var which is respected by scikit-build-core to use Ninja on all platforms
-environment = "CMAKE_GENERATOR=Ninja"
+# CMAKE_GENERATOR is respected by scikit-build-core to use Ninja on all platforms.
+# PIP_RETRIES: pip's default of 5 retries gives up after about 8 seconds, which
+# is too short for a brief DNS outage inside the build container; 10 retries
+# keep trying for several minutes before failing the build.
+environment = { CMAKE_GENERATOR = "Ninja", PIP_RETRIES = "10" }
 
 # Testing commands for our wheels
 before-test = [
